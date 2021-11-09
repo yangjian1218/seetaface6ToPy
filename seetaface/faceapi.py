@@ -43,6 +43,7 @@ dll = None
 LIB_PATH = os.path.join(API_DIR, "lib")
 dll = CDLL(os.path.join(LIB_PATH, "libSeetaFaceAPI.so"))
 
+
 # /home/yangjian/Projects/FaceAPI_demo/model
 MODEL_DIR = os.path.join(API_DIR, "model")
 
