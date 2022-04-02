@@ -40,8 +40,8 @@ dll = None
 #     dll = CDLL(os.path.join(LIB_PATH, "libSeetaFaceAPI.so"))
 
 # todo  只能在linux下使用
-LIB_PATH = os.path.join(API_DIR, "lib")
-dll = CDLL(os.path.join(LIB_PATH, "libSeetaFaceAPI.so"))
+LIB_PATH = os.path.join(API_DIR, "lib_mac/")
+dll = CDLL(os.path.join(LIB_PATH, "libSeetaFaceAPI.dylib"))
 
 # /home/yangjian/Projects/FaceAPI_demo/model
 MODEL_DIR = os.path.join(API_DIR, "model")
@@ -296,7 +296,7 @@ class SeetaFace(object):
         self._DectectEye = dll.DectectEye  # 眼睛状态检测,睁闭眼
         self._DectectEye.argtypes = [
             POINTER(SeetaImageData), POINTER(SeetaPointF), c_int32 * 2]
-        self._DetectMask.restype = c_void_p
+        self._DectectEye.restype = c_void_p
 
         self._ClarityEvaluate = dll.ClarityEvaluate  # 清晰度评估(传统)
         self._ClarityEvaluate.argtypes = [

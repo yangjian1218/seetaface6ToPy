@@ -14,12 +14,12 @@ import cv2
 
 func_list = ["FACE_DETECT", "LANDMARKER5", "LIVENESS", "LANDMARKER_MASK", "FACE_AGE", "FACE_GENDER", "FACE_RECOGNITION",
              "MOUTH_MASK", "EYE_STATE", "FACE_CLARITY", "FACE_BRIGHT", "FACE_RESOLUTION", "FACE_POSE", "FACE_INTEGRITY", "FACE_TRACK"]
-model_path = "./seeta/model"
+model_path = "./seetaface/model"
 seetaFace = SeetaFace(func_list, device=0, id=0)
 seetaFace.SetTrackResolution(310, 310)
 seetaFace.init_engine(model_path)
 
-image = cv2.imread("./images/0.63.jpg")  # 原图
+image = cv2.imread("./images/yj.jpg")  # 原图
 simage = get_seetaImageData_by_numpy(image)  # 原图转SeetaImageData
 
 # 人脸检测
