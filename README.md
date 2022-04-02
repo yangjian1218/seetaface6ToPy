@@ -30,8 +30,11 @@ make
 ## 4. 设置动态库到环境中
 
 ```
-sudo echo  ${seetaFace6ToPy目录路径}/seetaface/lib/ > /etc/ld.so.conf.d/seetaface6.con  
-sudo ldconfig
+# linux
+    sudo echo  ${seetaFace6ToPy目录路径}/seetaface/lib/ > /etc/ld.so.conf.d/seetaface6.con && sudo ldconfig
+# mac
+    export DYLD_LIBRARY_PATH=${seetaFace6ToPy目录路径}/seetaface/lib:$DYLD_LIBRARY_PATH
+    export DYLD_FALLBACK_LIBRARY_PATH=${seetaFace6ToPy目录路径}/seetaface/lib:$DYLD_FALLBACK_LIBRARY_PATH
 ```
 
 ## 5.运行seeta_test.py

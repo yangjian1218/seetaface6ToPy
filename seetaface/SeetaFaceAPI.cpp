@@ -5,10 +5,6 @@
 * @Last Modified time: 2021-09-30 11:18:00
 */
 #include <iostream>
-// #include <opencv2/opencv.hpp>
-// #include <opencv2/core/core.hpp>
-// #include <opencv2/highgui/highgui.hpp>
-// #include <opencv2/imgproc/imgproc.hpp>
 #include <seeta/Common/Struct.h>
 #include <seeta/FaceDetector.h>
 #include <seeta/FaceLandmarker.h>
@@ -633,39 +629,3 @@ extern "C" float CalculateSimilarity(float feature1[1024], float feature2[1024])
     float score = faceRecognizer->CalculateSimilarity(&feature1[0], &feature2[0]);
     return score;
 }
-// int main(int argc, char const *argv[])
-// {
-//     cout << "请输入图片地址:" << endl;
-//     string picpath;
-//     cin >> picpath;
-
-//     // const string picpath = "/home/yangjian/Projects/FaceAPI_demo/images/ch1.jpg";
-//     cv::Mat image = cv::imread(picpath, cv::IMREAD_COLOR); //第二个参数IMREA_COLOR让获取的图像数据是连续存储的
-//     if (image.empty())
-//     {
-//         return -1;
-//     }
-
-//     SeetaImageData simage;
-//     simage.width = image.cols;
-//     simage.height = image.rows;
-//     simage.channels = image.channels();
-//     simage.data = image.data;
-
-//     seeta::ModelSetting setting;
-//     setting.device = SEETA_DEVICE_AUTO; //GPU CPU AUTO
-//     setting.id = 0;
-//     setting.append("../model/face_detector.csta");
-//     //按原始cpp文件所在的路径为参考,而不是动态库所在路径.但如果是执行文件,那么按执行文件的位置
-//     seeta::FaceDetector faceDetector(setting);
-//     SeetaFaceInfoArray faces = faceDetector.detect(simage);
-
-//     for (int i = 0; i < faces.size; i++)
-//     {
-//         auto face = faces.data[i];
-//         SeetaRect box = face.pos;
-//         float score = face.score;
-//         cout << "x:" << box.x << " y:" << box.y << " w:" << box.width << " h:" << box.height << " score:" << score << endl;
-//     }
-//     return 0;
-// }
