@@ -1,2 +1,0 @@
-/home/yangjian/Projects/FaceAPI_demo/seeta/build/CMakeFiles/main.dir
-/home/yangjian/Projects/FaceAPI_demo/seeta/build/CMakeFiles/SeetaFaceAPI.dir
