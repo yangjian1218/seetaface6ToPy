@@ -9,23 +9,17 @@ IDE           : PYTHON
 REFERENCE 	  : https://github.com/yangjian1218
 '''
 
-
-from ctypes import *
-import cv2
-import numpy as np
-from PIL import Image
-from typing import List
-from seetaface.face_struct import *
 from seetaface.faceapi import *
+import cv2
 
 func_list = ["FACE_DETECT", "LANDMARKER5", "LIVENESS", "LANDMARKER_MASK", "FACE_AGE", "FACE_GENDER", "FACE_RECOGNITION",
              "MOUTH_MASK", "EYE_STATE", "FACE_CLARITY", "FACE_BRIGHT", "FACE_RESOLUTION", "FACE_POSE", "FACE_INTEGRITY", "FACE_TRACK"]
-model_path = "./seeta/model"
+model_path = "./seetaface/model"
 seetaFace = SeetaFace(func_list, device=0, id=0)
 seetaFace.SetTrackResolution(310, 310)
 seetaFace.init_engine(model_path)
 
-image = cv2.imread("./images/0.63.jpg")  # 原图
+image = cv2.imread("./images/yj.jpg")  # 原图
 simage = get_seetaImageData_by_numpy(image)  # 原图转SeetaImageData
 
 # 人脸检测
@@ -79,13 +73,13 @@ print("相似度=", similar1)
 cropface1 = seetaFace.CropFace(simage, points5)
 cv2.imwrite("./images/ch1_crop.jpg", cropface1)
 # 人脸跟踪
-#track_image = image.copy()
-#detectr_result = seetaFace.Track(simage)
+# track_image = image.copy()
+# detectr_result = seetaFace.Track(simage)
 #
-#face_tr = detectr_result.data[0].pos
+# face_tr = detectr_result.data[0].pos
 # print("face_tr",face_tr)
-#PID = detectr_result.data[0].PID
-#cv2.rectangle(track_image, (face_tr.x, face_tr.y), (face_tr.x + face_tr.width, face_tr.y + face_tr.height),(255, 0, 0), 2)
+# PID = detectr_result.data[0].PID
+# cv2.rectangle(track_image, (face_tr.x, face_tr.y), (face_tr.x + face_tr.width, face_tr.y + face_tr.height),(255, 0, 0), 2)
 # cv2.putText(track_image,"pid:{}".format(PID),(face_tr.x,face_tr.y),1,1,(0,0,255))
 # cv2.imshow("track",track_image)
 # cv2.waitKey(0)
@@ -95,7 +89,7 @@ cv2.imwrite("./images/ch1_crop.jpg", cropface1)
 mask_ret = seetaFace.DetectMask(simage, face1)
 print("mask_ret:", mask_ret)
 # 眼睛状态检测
-eye_state = seetaFace. DetectEye(simage2, points2)
+eye_state = seetaFace.DetectEye(simage2, points2)
 print("eye_state:", eye_state)
 # 清晰度
 clarity_level = seetaFace.ClarityEvaluate(simage, face1, points5)

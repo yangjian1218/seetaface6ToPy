@@ -9,15 +9,15 @@ IDE           : PYTHON
 REFERENCE 	  : https://github.com/yangjian1218
 '''
 
-
-# _*_coding:utf-8 _*_
-from .face_struct import *
-import cv2
-import numpy as np
 import base64
 import os
 import platform
-from easydict import EasyDict
+
+import cv2
+import numpy as np
+
+from .face_struct import *
+
 API_DIR = os.path.dirname(os.path.abspath(__file__))  # api.py的目录文件夹的绝对路径
 # print("API_DIR:", API_DIR)  # /home/yangjian/Projects/FaceAPI_demo
 platform_name = platform.platform().lower()
@@ -40,13 +40,11 @@ dll = None
 #     dll = CDLL(os.path.join(LIB_PATH, "libSeetaFaceAPI.so"))
 
 # todo  只能在linux下使用
-LIB_PATH = os.path.join(API_DIR, "lib")
-dll = CDLL(os.path.join(LIB_PATH, "libSeetaFaceAPI.so"))
-
+LIB_PATH = os.path.join(API_DIR, "lib_mac/")
+dll = CDLL(os.path.join(LIB_PATH, "libSeetaFaceAPI.dylib"))
 
 # /home/yangjian/Projects/FaceAPI_demo/model
 MODEL_DIR = os.path.join(API_DIR, "model")
-
 
 # 由于传递int数组比较方便,所以把字符串映射给int
 func_dict = {"FACE_DETECT": 0, "LANDMARKER5": 1, "LANDMARKER68": 2, "LIVENESS": 3, "LANDMARKER_MASK": 4, "FACE_AGE": 5,
@@ -59,11 +57,11 @@ class DetectProperty():
     # 最小人脸 默认值大小为20
     PROPERTY_MIN_FACE_SIZE = 0
     # 默认为0.9
-    PROPERTY_THRESHOLD = 1          # 检测器阈值
-    PROPERTY_MAX_IMAGE_WIDTH = 2    # 可检测的图像最大宽度
-    PROPERTY_MAX_IMAGE_HEIGHT = 3   # 可检测的图像最大高度
+    PROPERTY_THRESHOLD = 1  # 检测器阈值
+    PROPERTY_MAX_IMAGE_WIDTH = 2  # 可检测的图像最大宽度
+    PROPERTY_MAX_IMAGE_HEIGHT = 3  # 可检测的图像最大高度
     # 默认为1
-    PROPERTY_NUMBER_THREADS = 4     # 可检测的图像人脸最大数量
+    PROPERTY_NUMBER_THREADS = 4  # 可检测的图像人脸最大数量
 
 
 def get_numpy_by_seetaImageData(image_data: SeetaImageData) -> np.array:
@@ -77,7 +75,7 @@ def get_numpy_by_seetaImageData(image_data: SeetaImageData) -> np.array:
     height = image_data.height
     channels = image_data.channels
     row_array = np.array(np.fromiter(
-        image_data.data, dtype=np.uint8, count=width*height*channels))
+        image_data.data, dtype=np.uint8, count=width * height * channels))
     image_np = row_array.reshape([height, width, channels])
     return image_np
 
@@ -109,7 +107,7 @@ def get_numpy_by_cvImage(cvimage):
     cv_rows = cvimage.rows
     cv_cols = cvimage.cols
     cv_channels = cvimage.channels
-    b = string_at(data, cv_cols*cv_rows*cv_channels)   # 类似于base64
+    b = string_at(data, cv_cols * cv_rows * cv_channels)  # 类似于base64
     nparr = np.frombuffer(b, np.uint8)
     img_decode = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     return img_decode
@@ -272,7 +270,7 @@ class SeetaFace(object):
         self._PredictAgeWithCrop = dll.PredictAgeWithCrop
         self._PredictAgeWithCrop.restype = c_int32
         self._PredictAgeWithCrop.argtypes = (
-            POINTER(SeetaImageData),  POINTER(SeetaPointF))
+            POINTER(SeetaImageData), POINTER(SeetaPointF))
 
         self._PredictAge = dll.PredictAge
         self._PredictAge.restype = c_int32
@@ -280,47 +278,47 @@ class SeetaFace(object):
 
         self.InitEngine = dll.InitEngine
         self.InitEngine.restype = c_int32
-        self.InitEngine.argtypes = (c_int32*self.funcs_len, c_int32)
+        self.InitEngine.argtypes = (c_int32 * self.funcs_len, c_int32)
 
         # todo 新增部分
-        self.get_modelpath = dll.get_modelpath   # 获取模型文件目录,这样可以把模型文件位置乱放
+        self.get_modelpath = dll.get_modelpath  # 获取模型文件目录,这样可以把模型文件位置乱放
         self.get_modelpath.argtypes = [c_char_p]
         self.get_modelpath.restype = c_void_p
 
         self.set_device = dll.set_device  # 设置是否使用cpu/gpu 以及gpu的标号
         self.set_device.argtypes = [c_int32, c_int32]
 
-        self._DetectMask = dll.DetectMask       # 口罩检测
+        self._DetectMask = dll.DetectMask  # 口罩检测
         self._DetectMask.argtypes = [
             POINTER(SeetaImageData), POINTER(SeetaRect)]
         self._DetectMask.restype = c_int32
 
         self._DectectEye = dll.DectectEye  # 眼睛状态检测,睁闭眼
         self._DectectEye.argtypes = [
-            POINTER(SeetaImageData), POINTER(SeetaPointF), c_int32*2]
-        self._DetectMask.restype = c_void_p
+            POINTER(SeetaImageData), POINTER(SeetaPointF), c_int32 * 2]
+        self._DectectEye.restype = c_void_p
 
         self._ClarityEvaluate = dll.ClarityEvaluate  # 清晰度评估(传统)
         self._ClarityEvaluate.argtypes = [
             POINTER(SeetaImageData), POINTER(SeetaRect), POINTER(SeetaPointF)]
         self._ClarityEvaluate.restype = c_char_p
 
-        self._BrightEvaluate = dll.BrightEvaluate       # 亮度度评估(传统)
+        self._BrightEvaluate = dll.BrightEvaluate  # 亮度度评估(传统)
         self._BrightEvaluate.argtypes = [
             POINTER(SeetaImageData), POINTER(SeetaRect), POINTER(SeetaPointF)]
         self._BrightEvaluate.restype = c_char_p
 
-        self._ResolutionEvaluate = dll.ResolutionEvaluate       # 分辨率评估(传统)
+        self._ResolutionEvaluate = dll.ResolutionEvaluate  # 分辨率评估(传统)
         self._ResolutionEvaluate.argtypes = [
             POINTER(SeetaImageData), POINTER(SeetaRect), POINTER(SeetaPointF)]
         self._ResolutionEvaluate.restype = c_char_p
 
-        self._PoseEvaluate = dll.PoseEvaluate       # 人脸姿态质量(传统)
+        self._PoseEvaluate = dll.PoseEvaluate  # 人脸姿态质量(传统)
         self._PoseEvaluate.argtypes = [
             POINTER(SeetaImageData), POINTER(SeetaRect), POINTER(SeetaPointF)]
         self._PoseEvaluate.restype = c_char_p
 
-        self._IntegrityEvaluate = dll.IntegrityEvaluate       # 人脸完整性评估(传统)
+        self._IntegrityEvaluate = dll.IntegrityEvaluate  # 人脸完整性评估(传统)
         self._IntegrityEvaluate.argtypes = [
             POINTER(SeetaImageData), POINTER(SeetaRect), POINTER(SeetaPointF)]
         self._IntegrityEvaluate.restype = c_char_p
@@ -340,8 +338,8 @@ class SeetaFace(object):
         func_list = Array()
         for i in range(self.funcs_len):
             func_list[i] = func_dict[self._funcs_list[i]]
-        self.InitEngine(func_list, self.funcs_len)   # 初始化模型
-        os.chdir(cwd)   # 切换目录会当前工作目录
+        self.InitEngine(func_list, self.funcs_len)  # 初始化模型
+        os.chdir(cwd)  # 切换目录会当前工作目录
 
     def Track(self, simage) -> SeetaTrackingFaceInfoArray:
         """
@@ -411,7 +409,7 @@ class SeetaFace(object):
         :return: 人脸检测信息数组
         """
 
-        self.check_init("FACE_DETECT")   # 检验模型是否在输入模型参数中,这里并没有初始化
+        self.check_init("FACE_DETECT")  # 检验模型是否在输入模型参数中,这里并没有初始化
         return self._Detect(simage)
 
     def SetProperty(self, property: int, value):
@@ -698,9 +696,10 @@ class SeetaFace(object):
         self.check_init("EYE_STATE")
         eyestate = (c_int32 * 2)()
         self._DectectEye(simage, points, eyestate)
-        state = EasyDict()
-        state.left = statedict[eyestate[0]]
-        state.right = statedict[eyestate[1]]
+        state = {
+            "left": statedict[eyestate[0]],
+            "right": statedict[eyestate[1]],
+        }
         return state
 
     def ClarityEvaluate(self, simage: SeetaImageData, face: SeetaRect, points: List[SeetaPointF]):
